@@ -35,18 +35,18 @@
  * Insert LAST_ITEM_IN_LIST at the end of each mapping 
  */
 static const struct button_mapping button_context_standard[]  = {
-    { ACTION_STD_PREV,        BUTTON_SCROLL_BACK,                BUTTON_NONE },
-    { ACTION_STD_PREVREPEAT,  BUTTON_SCROLL_BACK|BUTTON_REPEAT,  BUTTON_NONE },
-    { ACTION_STD_NEXT,        BUTTON_SCROLL_FWD,                 BUTTON_NONE },
-    { ACTION_STD_NEXTREPEAT,  BUTTON_SCROLL_FWD|BUTTON_REPEAT,   BUTTON_NONE },
+    { ACTION_STD_PREV,        BUTTON_UP,                         BUTTON_NONE },
+    { ACTION_STD_PREVREPEAT,  BUTTON_UP|BUTTON_REPEAT,           BUTTON_NONE },
+    { ACTION_STD_NEXT,        BUTTON_DOWN,                       BUTTON_NONE },
+    { ACTION_STD_NEXTREPEAT,  BUTTON_DOWN|BUTTON_REPEAT,         BUTTON_NONE },
 
-    { ACTION_STD_MENU,        BUTTON_DOWN|BUTTON_REL,            BUTTON_DOWN },
+    { ACTION_STD_MENU,        BUTTON_HOME|BUTTON_REL,            BUTTON_HOME },
 
     { ACTION_STD_OK,          BUTTON_SELECT|BUTTON_REL,          BUTTON_SELECT },
     { ACTION_STD_OK,          BUTTON_RIGHT,                      BUTTON_NONE },
     { ACTION_STD_CANCEL,      BUTTON_LEFT,                       BUTTON_NONE },
 
-    { ACTION_STD_QUICKSCREEN, BUTTON_DOWN|BUTTON_REPEAT,         BUTTON_DOWN },
+    { ACTION_STD_QUICKSCREEN, BUTTON_HOME|BUTTON_REPEAT,         BUTTON_HOME },
     { ACTION_STD_CONTEXT,     BUTTON_SELECT|BUTTON_REPEAT,       BUTTON_SELECT },
 
     LAST_ITEM_IN_LIST
@@ -89,32 +89,34 @@ static const struct button_mapping button_context_wps[]  = {
 }; /* button_context_wps */
 
 static const struct button_mapping button_context_settings[] = {
-    { ACTION_STD_CANCEL,        BUTTON_LEFT,                      BUTTON_NONE },
-    { ACTION_SETTINGS_INC,      BUTTON_SCROLL_FWD,                BUTTON_NONE },
-    { ACTION_SETTINGS_INCREPEAT,BUTTON_SCROLL_FWD|BUTTON_REPEAT,  BUTTON_NONE },
-    { ACTION_SETTINGS_DEC,      BUTTON_SCROLL_BACK,               BUTTON_NONE },
-    { ACTION_SETTINGS_DECREPEAT,BUTTON_SCROLL_BACK|BUTTON_REPEAT, BUTTON_NONE },
+    { ACTION_STD_OK,            BUTTON_SELECT|BUTTON_REL,         BUTTON_SELECT },
+    { ACTION_STD_CANCEL,        BUTTON_HOME|BUTTON_REL,           BUTTON_HOME },
+    { ACTION_SETTINGS_RESET,    BUTTON_SELECT|BUTTON_REPEAT,      BUTTON_SELECT },
 
-    { ACTION_STD_PREV,          BUTTON_UP|BUTTON_REL,             BUTTON_UP   },
-    { ACTION_STD_PREVREPEAT,    BUTTON_UP|BUTTON_REPEAT,          BUTTON_UP   },
-    { ACTION_STD_NEXT,          BUTTON_DOWN|BUTTON_REL,           BUTTON_DOWN },
-    { ACTION_STD_NEXTREPEAT,    BUTTON_DOWN|BUTTON_REPEAT,        BUTTON_DOWN },
-    { ACTION_SETTINGS_RESET,    BUTTON_SELECT,                    BUTTON_NONE },
+    { ACTION_SETTINGS_INC,      BUTTON_UP|BUTTON_REL,             BUTTON_UP },
+    { ACTION_SETTINGS_INCREPEAT,BUTTON_UP|BUTTON_REPEAT,          BUTTON_UP },
+    { ACTION_SETTINGS_DEC,      BUTTON_DOWN|BUTTON_REL,           BUTTON_DOWN },
+    { ACTION_SETTINGS_DECREPEAT,BUTTON_DOWN|BUTTON_REPEAT,        BUTTON_DOWN },
+
+    { ACTION_STD_PREV,          BUTTON_LEFT,                      BUTTON_NONE },
+    { ACTION_STD_PREVREPEAT,    BUTTON_LEFT|BUTTON_REPEAT,        BUTTON_NONE },
+    { ACTION_STD_NEXT,          BUTTON_RIGHT,                     BUTTON_NONE },
+    { ACTION_STD_NEXTREPEAT,    BUTTON_RIGHT|BUTTON_REPEAT,       BUTTON_NONE },
 
     LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_STD),
 }; /* button_context_settings */
 
 static const struct button_mapping button_context_list[]  = {
-    { ACTION_LISTTREE_PGUP,   BUTTON_HOME|BUTTON_SCROLL_BACK,   BUTTON_HOME },
-    { ACTION_LISTTREE_PGDOWN, BUTTON_HOME|BUTTON_SCROLL_FWD,    BUTTON_HOME },
+    //{ ACTION_LISTTREE_PGUP,   BUTTON_HOME|BUTTON_SCROLL_BACK,   BUTTON_HOME },
+    //{ ACTION_LISTTREE_PGDOWN, BUTTON_HOME|BUTTON_SCROLL_FWD,    BUTTON_HOME },
 
     LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_STD)
 }; /* button_context_list */
 
 static const struct button_mapping button_context_tree[]  = {
-    { ACTION_TREE_WPS,    BUTTON_UP|BUTTON_REL,         BUTTON_UP },
-    { ACTION_TREE_STOP,   BUTTON_UP|BUTTON_REPEAT,      BUTTON_UP },
-    { ACTION_TREE_HOTKEY, BUTTON_HOME|BUTTON_REL,       BUTTON_HOME },
+    { ACTION_TREE_WPS,    BUTTON_HOME|BUTTON_REL,         BUTTON_HOME },
+    { ACTION_TREE_STOP,   BUTTON_HOME|BUTTON_REPEAT,      BUTTON_HOME },
+    //{ ACTION_TREE_HOTKEY, BUTTON_HOME|BUTTON_REL,       BUTTON_HOME },
     
     LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_LIST),
 }; /* button_context_tree */
@@ -164,31 +166,31 @@ static const struct button_mapping button_context_quickscreen[]  = {
 }; /* button_context_quickscreen */
 
 static const struct button_mapping button_context_settings_right_is_inc[]  = {
-    { ACTION_SETTINGS_INC,       BUTTON_SCROLL_FWD,               BUTTON_NONE },
-    { ACTION_SETTINGS_INCREPEAT, BUTTON_SCROLL_FWD|BUTTON_REPEAT, BUTTON_NONE },
-    { ACTION_SETTINGS_DEC,       BUTTON_SCROLL_BACK,              BUTTON_NONE },
-    { ACTION_SETTINGS_DECREPEAT, BUTTON_SCROLL_BACK|BUTTON_REPEAT,BUTTON_NONE },
+    { ACTION_SETTINGS_INC,       BUTTON_RIGHT,               BUTTON_NONE },
+    { ACTION_SETTINGS_INCREPEAT, BUTTON_RIGHT|BUTTON_REPEAT, BUTTON_NONE },
+    { ACTION_SETTINGS_DEC,       BUTTON_LEFT,                BUTTON_NONE },
+    { ACTION_SETTINGS_DECREPEAT, BUTTON_LEFT|BUTTON_REPEAT,  BUTTON_NONE },
 
-    { ACTION_STD_PREV,           BUTTON_UP|BUTTON_REL,            BUTTON_UP   },
-    { ACTION_STD_PREVREPEAT,     BUTTON_UP|BUTTON_REPEAT,         BUTTON_UP   },
-    { ACTION_STD_NEXT,           BUTTON_DOWN|BUTTON_REL,          BUTTON_DOWN },
-    { ACTION_STD_NEXTREPEAT,     BUTTON_DOWN|BUTTON_REPEAT,       BUTTON_DOWN },
-    { ACTION_NONE,               BUTTON_SELECT,                   BUTTON_NONE },
-    { ACTION_STD_OK,             BUTTON_SELECT|BUTTON_REL,        BUTTON_NONE },
-    { ACTION_STD_CANCEL,         BUTTON_LEFT|BUTTON_REL,          BUTTON_LEFT },
-    { ACTION_STD_OK,             BUTTON_RIGHT,                    BUTTON_NONE },
+    //{ ACTION_STD_PREV,           BUTTON_UP|BUTTON_REL,            BUTTON_UP   },
+    //{ ACTION_STD_PREVREPEAT,     BUTTON_UP|BUTTON_REPEAT,         BUTTON_UP   },
+    //{ ACTION_STD_NEXT,           BUTTON_DOWN|BUTTON_REL,          BUTTON_DOWN },
+    //{ ACTION_STD_NEXTREPEAT,     BUTTON_DOWN|BUTTON_REPEAT,       BUTTON_DOWN },
+    //{ ACTION_NONE,               BUTTON_SELECT,                   BUTTON_NONE },
+    //{ ACTION_STD_OK,             BUTTON_SELECT|BUTTON_REL,        BUTTON_NONE },
+    { ACTION_STD_CANCEL,         BUTTON_HOME|BUTTON_REL,     BUTTON_HOME },
+    //{ ACTION_STD_OK,             BUTTON_RIGHT,                    BUTTON_NONE },
     
     LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_STD),
 }; /* button_context_settings_right_is_inc */
 
-static const struct button_mapping button_context_settings_time[] = {
+/*static const struct button_mapping button_context_settings_time[] = {
     { ACTION_STD_PREV,        BUTTON_UP|BUTTON_REL,             BUTTON_NONE },
     { ACTION_STD_PREVREPEAT,  BUTTON_UP|BUTTON_REPEAT,          BUTTON_NONE },
     { ACTION_STD_NEXT,        BUTTON_DOWN|BUTTON_REL,           BUTTON_NONE },
     { ACTION_STD_NEXTREPEAT,  BUTTON_DOWN|BUTTON_REPEAT,        BUTTON_NONE },
 
     LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_SETTINGS)
-}; /* button_context_settings_time */
+};*/ /* button_context_settings_time */
 
 static const struct button_mapping button_context_pitchscreen[]  = {
     { ACTION_PS_INC_SMALL,      BUTTON_SCROLL_FWD,                BUTTON_NONE },
@@ -403,6 +405,7 @@ const struct button_mapping* get_context_mapping(int context)
             return button_context_tree;
 
         case CONTEXT_SETTINGS:
+        case CONTEXT_SETTINGS_TIME:
             return button_context_settings;
         case CONTEXT_CUSTOM|CONTEXT_SETTINGS:
         case CONTEXT_SETTINGS_COLOURCHOOSER:
@@ -410,8 +413,8 @@ const struct button_mapping* get_context_mapping(int context)
         case CONTEXT_SETTINGS_RECTRIGGER:
             return button_context_settings_right_is_inc;
 
-        case CONTEXT_SETTINGS_TIME:
-            return button_context_settings_time;
+        //case CONTEXT_SETTINGS_TIME:
+        //    return button_context_settings_time;
 
         case CONTEXT_YESNOSCREEN:
             return button_context_yesno;
