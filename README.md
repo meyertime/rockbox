@@ -1,4 +1,3 @@
-@@ -0,0 +1,49 @@ 
 # Rockbox, customized by meyertime
 
 For Rockbox generally, see the official website: https://www.rockbox.org/
