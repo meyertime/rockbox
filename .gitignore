@@ -96,6 +96,8 @@
 /tools/iaudio_bl_flash.h
 /tools/.vagrant
 /tools/*-console.log
+/tools/build
+/tools/mk500boot
 
 # /tools/database/
 /tools/database/database
@@ -105,6 +107,7 @@
 /tools/rbspeex/libspeex.a
 /tools/rbspeex/librbspeex.a
 /tools/rbspeex/dep-speex
+/tools/rbspeex/buildposix
 
 # /tools/ucl/src/
 /tools/ucl/src/libucl.a

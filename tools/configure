@@ -1373,6 +1373,11 @@ help() {
     --compiler-prefix Override compiler prefix (inherently dangerous)
     --help            Shows this message (must not be used with other options)
 
+    --meyertime=VALUE Indicate which meyertime customizations to use:
+                      sedimentary    Custom keymap for Sansa Fuze
+                      igneous        Custom FM region for RDA5802 chip
+                      metamorphic    Combination of sedimentary and igneous
+
 EOF
 
   exit
@@ -1392,6 +1397,7 @@ ARG_ARM_THUMB=
 ARG_PREFIX="$PREFIX"
 ARG_THREAD_SUPPORT=
 ARG_32BIT=
+ARG_MEYERTIME=
 err=            
 for arg in "$@"; do
 	case "$arg" in
@@ -1417,6 +1423,7 @@ for arg in "$@"; do
         --prefix=*)   ARG_PREFIX=`echo "$arg" | cut -d = -f 2`;;
         --compiler-prefix=*)   ARG_COMPILER_PREFIX=`echo "$arg" | cut -d = -f 2`;;
 		--help)       help;;
+    --meyertime=*) ARG_MEYERTIME=`echo "$arg" | cut -d = -f 2`;;
 		*)            err=1; echo "[ERROR] Option '$arg' unsupported";;
 	esac
 done
@@ -4793,6 +4800,63 @@ if [ "$ARG_RBDIR" != "" ]; then
   echo "Using alternate rockbox dir: ${rbdir}"
 fi
 
+
+
+if [ "$ARG_MEYERTIME" ]; then
+  meyertime_variant=$ARG_MEYERTIME
+else
+  echo "Enter meyertime variant:"
+cat <<EOF
+  s) sedimentary - Custom keymap for Sansa Fuze
+  i) igneous - Custom FM region for RDA5802 chip
+  m) metamorphic - Combination of sedimentary and igneous
+
+EOF
+
+  meyertime_variant=`input`;
+
+fi
+
+case $meyertime_variant in
+  [Ss])
+    meyertime_variant=sedimentary
+    ;;
+  [Ii])
+    meyertime_variant=igneous
+    ;;
+  [Mm])
+    meyertime_variant=metamorphic
+    ;;
+esac
+
+case $meyertime_variant in
+  sedimentary)
+    echo "Selected $meyertime_variant meyertime variant"
+    meyertime_defines="\
+#define MEYERTIME_KEYMAP
+"
+    ;;
+  igneous)
+    echo "Selected $meyertime_variant meyertime variant"
+    meyertime_defines="\
+#define MEYERTIME_FM
+"
+    ;;
+  metamorphic)
+    echo "Selected $meyertime_variant meyertime variant"
+    meyertime_defines="\
+#define MEYERTIME_KEYMAP
+#define MEYERTIME_FM
+"
+    ;;
+  *)
+    echo "Invalid meyertime variant."
+    exit 42
+    ;;
+esac
+
+
+
 cat > autoconf.h <<EOF
 /* This header was made by configure */
 #ifndef __BUILD_AUTOCONF_H
@@ -4867,6 +4931,9 @@ ${app_lcd_height}
 #define ROCKBOX_SHARE_PATH "${sharedir}"
 #define ROCKBOX_BINARY_PATH "${bindir}"
 #define ROCKBOX_LIBRARY_PATH "${libdir}"
+
+/* meyertime customizations */
+${meyertime_defines}
 
 #endif /* __BUILD_AUTOCONF_H */
 EOF

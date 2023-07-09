@@ -1,3 +1,4 @@
+# The following release variables do not appear to be used anywhere
 $publicrelease="3.15";
 $manualrelease="3.15";
 $voicerelease="3.15";
@@ -279,6 +280,7 @@ $releasenotes="/wiki/ReleaseNotes315";
     'sansaclipplus' => {
         name => 'SanDisk Sansa Clip+',
         status => 3,
+        meyertime => [ 'igneous' ],
     },
     'sansaclipzip' => {
         name => 'SanDisk Sansa Clip Zip',
@@ -296,11 +298,13 @@ $releasenotes="/wiki/ReleaseNotes315";
     'sansafuze' => {
         name => 'SanDisk Sansa Fuze',
         status => 3,
+        meyertime => [ 'sedimentary' ],
     },
     'sansafuzev2' => {
         name => 'SanDisk Sansa Fuze v2',
         status => 3,
         icon => 'sansafuze',
+        meyertime => [ 'sedimentary', 'igneous', 'metamorphic' ],
     },
     'sansafuzeplus' => {
         name => 'SanDisk Sansa Fuze+',
@@ -467,7 +471,7 @@ sub stablebuilds {
     my @list;
 
     for my $b (sort byname keys %builds) {
-        push @list, $b if ($builds{$b}{status} >= 3) or $builds{$b}{release};
+        push @list, $b if (($builds{$b}{status} >= 3) or $builds{$b}{release}) and $builds{$b}{meyertime};
     }
 
     return @list;

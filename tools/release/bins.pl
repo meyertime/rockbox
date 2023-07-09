@@ -1,5 +1,6 @@
 #!/usr/bin/perl
-$version="3.15";
+$rockbox_version="3.15";
+$meyertime_version="1";
 
 require "tools/builds.pm";
 
@@ -30,21 +31,29 @@ $rev = `svnversion`;
 chomp $rev;
 print "rev $rev\n" if($verbose);
 
+sub get_version {
+    my ($meyertime)=@_;
+    return "$rockbox_version-$meyertime.$meyertime_version";
+}
+
 # made once for all targets
 sub runone {
-    my ($dir, $confnum, $extra)=@_;
+    my ($b, $confnum, $extra, $meyertime)=@_;
     my $a;
+    my $dir = "$b-$meyertime";
 
     if($doonly && ($doonly ne $dir)) {
         return;
     }
+
+    my $version=get_version($meyertime);
 
     mkdir "build-$dir";
     chdir "build-$dir";
     print "Build in build-$dir\n" if($verbose);
 
     # build the manual(s)
-    $a = buildit($dir, $confnum, $extra);
+    $a = buildit($dir, $confnum, $extra, $meyertime);
 
     chdir "..";
 
@@ -52,9 +61,9 @@ sub runone {
     my $map="build-$dir/rockbox-maps.zip";
     my $elf="build-$dir/rockbox-elfs.zip";
     if (-f $o) {
-        my $newo="output/rockbox-$dir-$version.zip";
-        my $newmap="output/rockbox-$dir-$version-maps.zip";
-        my $newelf="output/rockbox-$dir-$version-elfs.zip";
+        my $newo="output/rockbox-$b-$version.zip";
+        my $newmap="output/rockbox-$b-$version-maps.zip";
+        my $newelf="output/rockbox-$b-$version-elfs.zip";
         system("mkdir -p output");
         system("mv $o $newo");
         print "moved $o to $newo\n" if($verbose);
@@ -77,6 +86,8 @@ sub fonts {
     if($doonly && ($doonly ne $dir)) {
         return;
     }
+
+    my $version=$rockbox_version;
 
     mkdir "build-$dir";
     chdir "build-$dir";
@@ -103,12 +114,14 @@ sub fonts {
 
 
 sub buildit {
-    my ($target, $confnum, $extra)=@_;
+    my ($target, $confnum, $extra, $meyertime)=@_;
+
+    my $version=get_version($meyertime);
 
     `rm -rf * >/dev/null 2>&1`;
 
     my $ram = $extra ? $extra : -1;
-    my $c = "../tools/configure --type=n --target=$confnum --ram=$ram";
+    my $c = "../tools/configure --type=n --target=$confnum --ram=$ram --meyertime=$meyertime";
 
     print "C: $c\n" if($verbose);
     `$c`;
@@ -147,8 +160,10 @@ print "cd tools && make\n" if($verbose);
 
 for my $b (&stablebuilds) {
     my $configname = $builds{$b}{configname} ? $builds{$b}{configname} : $b;
-    runone($b, $configname, $builds{$b}{ram});
+    for my $m (@{$builds{$b}{meyertime}}) {
+        runone($b, $configname, $builds{$b}{ram}, $m);
+    }
 }
 
-fonts("fonts", "iaudiox5");
+#fonts("fonts", "iaudiox5");
 
