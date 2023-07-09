@@ -11,9 +11,9 @@ This is a fork of Rockbox that implements some customizations specifically for t
 - `igneous` - [Custom FM region](#custom-fm-region)
 - `metamorphic` - Combination of `sedimentary` and `igneous`
 
-I plan to publish releases here: https://github.com/meyertime/rockbox/releases
+These customizations are based on the latest stable version of Rockbox.  Releases are published here: https://github.com/meyertime/rockbox/releases
 
-Currently, I am only testing for the Sansa Fuze v2.  If there is interest in `sedimentary` for the Sansa Fuze v1 or `igneous` for the Clip+, please open an issue, and I will provide those builds.
+Currently, I am only testing for the Sansa Fuze.  If there is interest in `igneous` for the Clip+, please open an issue, and I will provide the build.
 
 ## Custom keymap
 

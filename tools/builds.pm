@@ -280,7 +280,7 @@ $releasenotes="/wiki/ReleaseNotes315";
     'sansaclipplus' => {
         name => 'SanDisk Sansa Clip+',
         status => 3,
-        meyertime => [ 'igneous' ],
+        #meyertime => [ 'igneous' ],
     },
     'sansaclipzip' => {
         name => 'SanDisk Sansa Clip Zip',
