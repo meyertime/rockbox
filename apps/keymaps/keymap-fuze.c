@@ -26,6 +26,8 @@
 #include "button.h"
 #include "settings.h"
 
+#ifndef MEYERTIME_KEYMAP
+
 /* {Action Code,    Button code,    Prereq button code } */
 
 /* 
@@ -449,3 +451,431 @@ const struct button_mapping* get_context_mapping(int context)
     } 
     return button_context_standard;
 }
+
+
+
+#else /* MEYERTIME_KEYMAP */
+
+
+
+// Let's make these more readable:
+#define DOWN(b, a) { a, b, BUTTON_NONE }
+#define REPEAT(b, a) { a, b|BUTTON_REPEAT, BUTTON_NONE }
+#define UP(b, a) { a, b|BUTTON_REL, BUTTON_NONE }
+#define SHORT(b, a) { a, b|BUTTON_REL, b }
+#define LONG(b, a) { a, b|BUTTON_REPEAT, b }
+#define END(b, a) { a, b|BUTTON_REL, b|BUTTON_REPEAT }
+#define COMBO(b1, b2, a) { a, b1|b2, b1 }
+
+static const struct button_mapping button_context_standard[]  = {
+    DOWN  (BUTTON_UP,     ACTION_STD_PREV),
+    REPEAT(BUTTON_UP,     ACTION_STD_PREVREPEAT),
+    DOWN  (BUTTON_DOWN,   ACTION_STD_NEXT),
+    REPEAT(BUTTON_DOWN,   ACTION_STD_NEXTREPEAT),
+    DOWN  (BUTTON_LEFT,   ACTION_STD_CANCEL),
+    DOWN  (BUTTON_RIGHT,  ACTION_STD_OK),
+    SHORT (BUTTON_SELECT, ACTION_STD_OK),
+    LONG  (BUTTON_SELECT, ACTION_STD_CONTEXT),
+    SHORT (BUTTON_HOME,   ACTION_STD_CANCEL),
+    LONG  (BUTTON_HOME,   ACTION_STD_MENU),
+    SHORT (BUTTON_POWER,  ACTION_STD_QUICKSCREEN),
+
+    LAST_ITEM_IN_LIST
+}; /* button_context_standard */
+
+static const struct button_mapping button_context_wps[]  = {
+    SHORT (BUTTON_UP,                  ACTION_WPS_PLAY),
+    LONG  (BUTTON_UP,                  ACTION_WPS_STOP),
+    SHORT (BUTTON_DOWN,                ACTION_WPS_MENU),
+    LONG  (BUTTON_DOWN,                ACTION_WPS_QUICKSCREEN),
+    SHORT (BUTTON_LEFT,                ACTION_WPS_SKIPPREV),
+    REPEAT(BUTTON_LEFT,                ACTION_WPS_SEEKBACK),
+    END   (BUTTON_LEFT,                ACTION_WPS_STOPSEEK),
+    SHORT (BUTTON_RIGHT,               ACTION_WPS_SKIPNEXT),
+    REPEAT(BUTTON_RIGHT,               ACTION_WPS_SEEKFWD),
+    END   (BUTTON_RIGHT,               ACTION_WPS_STOPSEEK),
+    SHORT (BUTTON_SELECT,              ACTION_WPS_BROWSE),
+    LONG  (BUTTON_SELECT,              ACTION_WPS_CONTEXT),
+    COMBO (BUTTON_SELECT, BUTTON_UP,   ACTION_WPS_PITCHSCREEN),
+    COMBO (BUTTON_SELECT, BUTTON_DOWN, ACTION_WPS_ID3SCREEN),
+    COMBO (BUTTON_HOME, BUTTON_RIGHT,  ACTION_WPS_ABSETB_NEXTDIR),
+    COMBO (BUTTON_HOME, BUTTON_LEFT,   ACTION_WPS_ABSETA_PREVDIR),
+    COMBO (BUTTON_HOME, BUTTON_UP,     ACTION_WPS_ABRESET),
+    SHORT (BUTTON_HOME,                ACTION_WPS_MENU),
+    DOWN  (BUTTON_SCROLL_BACK,         ACTION_WPS_VOLDOWN),
+    REPEAT(BUTTON_SCROLL_BACK,         ACTION_WPS_VOLDOWN),
+    DOWN  (BUTTON_SCROLL_FWD,          ACTION_WPS_VOLUP),
+    REPEAT(BUTTON_SCROLL_FWD,          ACTION_WPS_VOLUP),
+
+    LAST_ITEM_IN_LIST
+}; /* button_context_wps */
+
+static const struct button_mapping button_context_settings[] = {
+    DOWN  (BUTTON_UP,     ACTION_SETTINGS_INC),
+    REPEAT(BUTTON_UP,     ACTION_SETTINGS_INCREPEAT),
+    DOWN  (BUTTON_DOWN,   ACTION_SETTINGS_DEC),
+    REPEAT(BUTTON_DOWN,   ACTION_SETTINGS_DECREPEAT),
+    DOWN  (BUTTON_LEFT,   ACTION_STD_PREV),
+    REPEAT(BUTTON_LEFT,   ACTION_STD_PREVREPEAT),
+    DOWN  (BUTTON_RIGHT,  ACTION_STD_NEXT),
+    REPEAT(BUTTON_RIGHT,  ACTION_STD_NEXTREPEAT),
+    SHORT (BUTTON_SELECT, ACTION_STD_OK),
+    LONG  (BUTTON_SELECT, ACTION_SETTINGS_RESET),
+    SHORT (BUTTON_HOME,   ACTION_STD_CANCEL),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_STD),
+}; /* button_context_settings */
+
+static const struct button_mapping button_context_list[]  = {
+    COMBO (BUTTON_HOME, BUTTON_UP,   ACTION_LISTTREE_PGUP),
+    COMBO (BUTTON_HOME, BUTTON_DOWN, ACTION_LISTTREE_PGDOWN),
+//  DOWN  (BUTTON_SCROLL_BACK,       ACTION_LIST_VOLDOWN),
+//  REPEAT(BUTTON_SCROLL_BACK,       ACTION_LIST_VOLDOWN),
+//  DOWN  (BUTTON_SCROLL_FWD,        ACTION_LIST_VOLUP),
+//  REPEAT(BUTTON_SCROLL_FWD,        ACTION_LIST_VOLUP),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_STD)
+}; /* button_context_list */
+
+static const struct button_mapping button_context_tree[]  = {
+//  SHORT (BUTTON_UP, ACTION_TREE_WPS),
+//  LONG  (BUTTON_UP, ACTION_TREE_STOP),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_LIST),
+}; /* button_context_tree */
+
+static const struct button_mapping button_context_listtree_scroll_without_combo[]  = {
+    // Also applies to main menu
+    DOWN  (BUTTON_LEFT,  ACTION_NONE),
+    SHORT (BUTTON_LEFT,  ACTION_STD_CANCEL),
+    LONG  (BUTTON_LEFT,  ACTION_TREE_ROOT_INIT),
+    REPEAT(BUTTON_LEFT,  ACTION_TREE_PGLEFT),
+    DOWN  (BUTTON_RIGHT, ACTION_NONE),
+    SHORT (BUTTON_RIGHT, ACTION_STD_OK),
+    REPEAT(BUTTON_RIGHT, ACTION_TREE_PGRIGHT),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_CUSTOM|CONTEXT_TREE),
+}; /* button_context_listtree_scroll_without_combo */
+
+static const struct button_mapping button_context_listtree_scroll_with_combo[]  = {
+    // Also applies to main menu
+    DOWN  (BUTTON_HOME|BUTTON_LEFT,  ACTION_TREE_PGLEFT),
+    LONG  (BUTTON_HOME|BUTTON_LEFT,  ACTION_TREE_ROOT_INIT),
+    REPEAT(BUTTON_HOME|BUTTON_LEFT,  ACTION_TREE_PGLEFT),
+    DOWN  (BUTTON_HOME|BUTTON_RIGHT, ACTION_TREE_PGRIGHT),
+    REPEAT(BUTTON_HOME|BUTTON_RIGHT, ACTION_TREE_PGRIGHT),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_CUSTOM|CONTEXT_TREE),
+}; /* button_context_listtree_scroll_with_combo */
+
+static const struct button_mapping button_context_yesno[]  = {
+    DOWN  (BUTTON_SELECT, ACTION_YESNO_ACCEPT),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_STD),
+}; /* button_context_settings_yesno */
+
+static const struct button_mapping button_context_quickscreen[]  = {
+    UP    (BUTTON_UP,     ACTION_QS_TOP),
+    REPEAT(BUTTON_UP,     ACTION_QS_TOP),
+    UP    (BUTTON_DOWN,   ACTION_QS_DOWN),
+    REPEAT(BUTTON_DOWN,   ACTION_QS_DOWN),
+    DOWN  (BUTTON_LEFT,   ACTION_NONE),
+    UP    (BUTTON_LEFT,   ACTION_QS_LEFT),
+    REPEAT(BUTTON_LEFT,   ACTION_QS_LEFT),
+    UP    (BUTTON_RIGHT,  ACTION_QS_RIGHT),
+    REPEAT(BUTTON_RIGHT,  ACTION_QS_RIGHT),
+    UP    (BUTTON_SELECT, ACTION_STD_CANCEL),
+    REPEAT(BUTTON_HOME,   ACTION_STD_CANCEL),
+    SHORT (BUTTON_POWER,  ACTION_STD_CANCEL),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_STD),
+}; /* button_context_quickscreen */
+
+static const struct button_mapping button_context_settings_right_is_inc[]  = {
+    DOWN  (BUTTON_LEFT,  ACTION_SETTINGS_DEC),
+    REPEAT(BUTTON_LEFT,  ACTION_SETTINGS_DECREPEAT),
+    DOWN  (BUTTON_RIGHT, ACTION_SETTINGS_INC),
+    REPEAT(BUTTON_RIGHT, ACTION_SETTINGS_INCREPEAT),
+    SHORT (BUTTON_POWER, ACTION_STD_CANCEL),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_STD),
+}; /* button_context_settings_right_is_inc */
+
+static const struct button_mapping button_context_settings_time[] = {
+    // Fall back on regular settings
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_SETTINGS)
+}; /* button_context_settings_time */
+
+static const struct button_mapping button_context_pitchscreen[]  = {
+    DOWN  (BUTTON_UP,     ACTION_PS_INC_SMALL),
+    REPEAT(BUTTON_UP,     ACTION_PS_INC_BIG),
+    DOWN  (BUTTON_DOWN,   ACTION_PS_DEC_SMALL),
+    REPEAT(BUTTON_DOWN,   ACTION_PS_DEC_BIG),   
+    DOWN  (BUTTON_LEFT,   ACTION_PS_NUDGE_LEFT),
+    UP    (BUTTON_LEFT,   ACTION_PS_NUDGE_LEFTOFF),
+    REPEAT(BUTTON_LEFT,   ACTION_PS_SLOWER),
+    DOWN  (BUTTON_RIGHT,  ACTION_PS_NUDGE_RIGHT),
+    UP    (BUTTON_RIGHT,  ACTION_PS_NUDGE_RIGHTOFF),
+    REPEAT(BUTTON_RIGHT,  ACTION_PS_FASTER),
+    LONG  (BUTTON_SELECT, ACTION_PS_RESET),
+    SHORT (BUTTON_HOME,   ACTION_PS_EXIT),
+    LONG  (BUTTON_HOME,   ACTION_PS_TOGGLE_MODE),
+    SHORT (BUTTON_POWER,  ACTION_PS_EXIT),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_STD),
+}; /* button_context_pitchscreen */
+
+#ifdef HAVE_RECORDING
+/** Recording Screen **/
+static const struct button_mapping button_context_recscreen[]  = {
+    SHORT (BUTTON_UP,     ACTION_STD_PREV),
+    LONG  (BUTTON_UP,     ACTION_REC_PAUSE),
+    SHORT (BUTTON_DOWN,   ACTION_STD_NEXT),
+    LONG  (BUTTON_DOWN,   ACTION_STD_MENU),
+    DOWN  (BUTTON_LEFT,   ACTION_SETTINGS_DEC),
+    REPEAT(BUTTON_LEFT,   ACTION_SETTINGS_DECREPEAT),
+    DOWN  (BUTTON_RIGHT,  ACTION_SETTINGS_INC),
+    REPEAT(BUTTON_RIGHT,  ACTION_SETTINGS_INCREPEAT),
+    SHORT (BUTTON_SELECT, ACTION_REC_PAUSE),
+    LONG  (BUTTON_SELECT, ACTION_STD_MENU),
+    SHORT (BUTTON_HOME,   ACTION_STD_CANCEL),
+    LONG  (BUTTON_HOME,   ACTION_REC_NEWFILE),
+
+    DOWN  (BUTTON_UP,   ACTION_NONE),
+    REPEAT(BUTTON_UP,   ACTION_NONE),
+    DOWN  (BUTTON_DOWN, ACTION_NONE),
+    REPEAT(BUTTON_DOWN, ACTION_NONE),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_STD)
+}; /* button_context_recscreen */
+#endif
+
+/** FM Radio Screen **/
+static const struct button_mapping button_context_radio[]  = {
+    SHORT (BUTTON_UP,          ACTION_FM_PLAY),
+    LONG  (BUTTON_UP,          ACTION_FM_STOP),
+    LONG  (BUTTON_DOWN,        ACTION_FM_MENU),
+    DOWN  (BUTTON_LEFT,        ACTION_STD_PREV),
+    REPEAT(BUTTON_LEFT,        ACTION_STD_PREVREPEAT),
+    DOWN  (BUTTON_RIGHT,       ACTION_STD_NEXT),
+    REPEAT(BUTTON_RIGHT,       ACTION_STD_NEXTREPEAT),
+    SHORT (BUTTON_SELECT,      ACTION_FM_PRESET),
+    LONG  (BUTTON_SELECT,      ACTION_FM_MENU),
+    SHORT (BUTTON_HOME,        ACTION_FM_EXIT),
+    LONG  (BUTTON_HOME,        ACTION_FM_MODE),
+    DOWN  (BUTTON_SCROLL_BACK, ACTION_SETTINGS_DEC),
+    REPEAT(BUTTON_SCROLL_BACK, ACTION_SETTINGS_DECREPEAT),
+    DOWN  (BUTTON_SCROLL_FWD,  ACTION_SETTINGS_INC),
+    REPEAT(BUTTON_SCROLL_FWD,  ACTION_SETTINGS_INCREPEAT),
+
+    DOWN  (BUTTON_UP,   ACTION_NONE),
+    REPEAT(BUTTON_UP,   ACTION_NONE),
+    DOWN  (BUTTON_DOWN, ACTION_NONE),
+    REPEAT(BUTTON_DOWN, ACTION_NONE),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_SETTINGS)
+}; /* button_context_radio */
+
+static const struct button_mapping button_context_keyboard[]  = {
+    // Also applies to morse input, which clip does not have
+    DOWN  (BUTTON_UP,          ACTION_KBD_UP),
+    REPEAT(BUTTON_UP,          ACTION_KBD_UP),
+    DOWN  (BUTTON_DOWN,        ACTION_KBD_DOWN),
+    REPEAT(BUTTON_DOWN,        ACTION_KBD_DOWN),
+    DOWN  (BUTTON_LEFT,        ACTION_KBD_LEFT),
+    REPEAT(BUTTON_LEFT,        ACTION_KBD_LEFT),
+    DOWN  (BUTTON_RIGHT,       ACTION_KBD_RIGHT),
+    REPEAT(BUTTON_RIGHT,       ACTION_KBD_RIGHT),
+    SHORT (BUTTON_SELECT,      ACTION_KBD_SELECT),
+    LONG  (BUTTON_SELECT,      ACTION_KBD_DONE),
+    DOWN  (BUTTON_HOME,        ACTION_KBD_BACKSPACE),
+    REPEAT(BUTTON_HOME,        ACTION_KBD_BACKSPACE),
+    SHORT (BUTTON_POWER,       ACTION_KBD_ABORT),
+    DOWN  (BUTTON_SCROLL_BACK, ACTION_KBD_CURSOR_LEFT),
+    REPEAT(BUTTON_SCROLL_BACK, ACTION_KBD_CURSOR_LEFT),
+    DOWN  (BUTTON_SCROLL_FWD,  ACTION_KBD_CURSOR_RIGHT),
+    REPEAT(BUTTON_SCROLL_FWD,  ACTION_KBD_CURSOR_RIGHT),
+
+    LAST_ITEM_IN_LIST
+}; /* button_context_keyboard */
+
+static const struct button_mapping button_context_bmark[]  = {
+    LONG  (BUTTON_HOME, ACTION_BMS_DELETE),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_LIST),
+}; /* button_context_bmark */
+
+#ifdef USB_ENABLE_HID
+static const struct button_mapping button_context_usb_hid[] = {
+    SHORT (BUTTON_HOME, ACTION_USB_HID_MODE_SWITCH_NEXT),
+    LONG  (BUTTON_HOME, ACTION_USB_HID_MODE_SWITCH_PREV),
+
+    LAST_ITEM_IN_LIST
+}; /* button_context_usb_hid */
+
+static const struct button_mapping button_context_usb_hid_mode_multimedia[] = {
+    SHORT (BUTTON_UP,          ACTION_USB_HID_MULTIMEDIA_PLAYBACK_PLAY_PAUSE),
+    LONG  (BUTTON_UP,          ACTION_USB_HID_MULTIMEDIA_PLAYBACK_STOP),
+    SHORT (BUTTON_LEFT,        ACTION_USB_HID_MULTIMEDIA_PLAYBACK_TRACK_PREV),
+    SHORT (BUTTON_RIGHT,       ACTION_USB_HID_MULTIMEDIA_PLAYBACK_TRACK_NEXT),
+    SHORT (BUTTON_SELECT,      ACTION_USB_HID_MULTIMEDIA_VOLUME_MUTE),
+    DOWN  (BUTTON_SCROLL_BACK, ACTION_USB_HID_MULTIMEDIA_VOLUME_DOWN),
+    REPEAT(BUTTON_SCROLL_BACK, ACTION_USB_HID_MULTIMEDIA_VOLUME_DOWN),
+    DOWN  (BUTTON_SCROLL_FWD,  ACTION_USB_HID_MULTIMEDIA_VOLUME_UP),
+    REPEAT(BUTTON_SCROLL_FWD,  ACTION_USB_HID_MULTIMEDIA_VOLUME_UP),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_USB_HID)
+}; /* button_context_usb_hid_mode_multimedia */
+
+static const struct button_mapping button_context_usb_hid_mode_presentation[] = {
+    SHORT (BUTTON_UP,          ACTION_USB_HID_PRESENTATION_SLIDESHOW_START),
+    SHORT (BUTTON_DOWN,        ACTION_USB_HID_PRESENTATION_SCREEN_BLACK),
+    LONG  (BUTTON_DOWN,        ACTION_USB_HID_PRESENTATION_SCREEN_WHITE),
+    SHORT (BUTTON_LEFT,        ACTION_USB_HID_PRESENTATION_SLIDE_PREV),
+    LONG  (BUTTON_LEFT,        ACTION_USB_HID_PRESENTATION_SLIDE_FIRST),
+    SHORT (BUTTON_RIGHT,       ACTION_USB_HID_PRESENTATION_SLIDE_NEXT),
+    LONG  (BUTTON_RIGHT,       ACTION_USB_HID_PRESENTATION_SLIDE_LAST),
+    SHORT (BUTTON_SELECT,      ACTION_USB_HID_PRESENTATION_MOUSE_CLICK),
+    LONG  (BUTTON_SELECT,      ACTION_USB_HID_PRESENTATION_MOUSE_OVER),
+    SHORT (BUTTON_POWER,       ACTION_USB_HID_PRESENTATION_SLIDESHOW_LEAVE),
+    DOWN  (BUTTON_SCROLL_BACK, ACTION_USB_HID_PRESENTATION_LINK_PREV),
+    REPEAT(BUTTON_SCROLL_BACK, ACTION_USB_HID_PRESENTATION_LINK_PREV),
+    DOWN  (BUTTON_SCROLL_FWD,  ACTION_USB_HID_PRESENTATION_LINK_NEXT),
+    REPEAT(BUTTON_SCROLL_FWD,  ACTION_USB_HID_PRESENTATION_LINK_NEXT),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_USB_HID)
+}; /* button_context_usb_hid_mode_presentation */
+
+static const struct button_mapping button_context_usb_hid_mode_browser[] = {
+    SHORT (BUTTON_UP,             ACTION_USB_HID_BROWSER_SCROLL_PAGE_UP),
+    LONG  (BUTTON_UP,             ACTION_USB_HID_BROWSER_ZOOM_IN),
+    LONG  (BUTTON_UP|BUTTON_DOWN, ACTION_USB_HID_BROWSER_ZOOM_RESET),
+    SHORT (BUTTON_DOWN,           ACTION_USB_HID_BROWSER_SCROLL_PAGE_DOWN),
+    LONG  (BUTTON_DOWN,           ACTION_USB_HID_BROWSER_ZOOM_OUT),
+    SHORT (BUTTON_LEFT,           ACTION_USB_HID_BROWSER_TAB_PREV),
+    LONG  (BUTTON_LEFT,           ACTION_USB_HID_BROWSER_HISTORY_BACK),
+    SHORT (BUTTON_RIGHT,          ACTION_USB_HID_BROWSER_TAB_NEXT),
+    LONG  (BUTTON_RIGHT,          ACTION_USB_HID_BROWSER_HISTORY_FORWARD),
+    SHORT (BUTTON_SELECT,         ACTION_USB_HID_BROWSER_VIEW_FULL_SCREEN),
+    LONG  (BUTTON_SELECT,         ACTION_USB_HID_BROWSER_ZOOM_RESET),
+    LONG  (BUTTON_POWER,          ACTION_USB_HID_BROWSER_TAB_CLOSE),
+    DOWN  (BUTTON_SCROLL_BACK,    ACTION_USB_HID_BROWSER_SCROLL_UP),
+    REPEAT(BUTTON_SCROLL_BACK,    ACTION_USB_HID_BROWSER_SCROLL_UP),
+    DOWN  (BUTTON_SCROLL_FWD,     ACTION_USB_HID_BROWSER_SCROLL_DOWN),
+    REPEAT(BUTTON_SCROLL_FWD,     ACTION_USB_HID_BROWSER_SCROLL_DOWN),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_USB_HID)
+}; /* button_context_usb_hid_mode_browser */
+
+#ifdef HAVE_USB_HID_MOUSE
+static const struct button_mapping button_context_usb_hid_mode_mouse[] = {
+    DOWN  (BUTTON_UP,                  ACTION_USB_HID_MOUSE_UP),
+    REPEAT(BUTTON_UP,                  ACTION_USB_HID_MOUSE_UP_REP),
+    DOWN  (BUTTON_DOWN,                ACTION_USB_HID_MOUSE_DOWN),
+    REPEAT(BUTTON_DOWN,                ACTION_USB_HID_MOUSE_DOWN_REP),
+    DOWN  (BUTTON_LEFT,                ACTION_USB_HID_MOUSE_LEFT),
+    REPEAT(BUTTON_LEFT,                ACTION_USB_HID_MOUSE_LEFT_REP),
+    DOWN  (BUTTON_RIGHT,               ACTION_USB_HID_MOUSE_RIGHT),
+    REPEAT(BUTTON_RIGHT,               ACTION_USB_HID_MOUSE_RIGHT_REP),
+    DOWN  (BUTTON_SELECT,              ACTION_USB_HID_MOUSE_BUTTON_LEFT),
+    UP    (BUTTON_SELECT,              ACTION_USB_HID_MOUSE_BUTTON_LEFT_REL),
+    DOWN  (BUTTON_SELECT|BUTTON_UP,    ACTION_USB_HID_MOUSE_LDRAG_UP),
+    REPEAT(BUTTON_SELECT|BUTTON_UP,    ACTION_USB_HID_MOUSE_LDRAG_UP_REP),
+    DOWN  (BUTTON_SELECT|BUTTON_DOWN,  ACTION_USB_HID_MOUSE_LDRAG_DOWN),
+    REPEAT(BUTTON_SELECT|BUTTON_DOWN,  ACTION_USB_HID_MOUSE_LDRAG_DOWN_REP),
+    DOWN  (BUTTON_SELECT|BUTTON_LEFT,  ACTION_USB_HID_MOUSE_LDRAG_LEFT),
+    REPEAT(BUTTON_SELECT|BUTTON_LEFT,  ACTION_USB_HID_MOUSE_LDRAG_LEFT_REP),
+    DOWN  (BUTTON_SELECT|BUTTON_RIGHT, ACTION_USB_HID_MOUSE_LDRAG_RIGHT),
+    REPEAT(BUTTON_SELECT|BUTTON_RIGHT, ACTION_USB_HID_MOUSE_LDRAG_RIGHT_REP),
+    DOWN  (BUTTON_POWER,               ACTION_USB_HID_MOUSE_BUTTON_RIGHT),
+    UP    (BUTTON_POWER,               ACTION_USB_HID_MOUSE_BUTTON_RIGHT_REL),
+    DOWN  (BUTTON_POWER|BUTTON_UP,     ACTION_USB_HID_MOUSE_RDRAG_UP),
+    REPEAT(BUTTON_POWER|BUTTON_UP,     ACTION_USB_HID_MOUSE_RDRAG_UP_REP),
+    DOWN  (BUTTON_POWER|BUTTON_DOWN,   ACTION_USB_HID_MOUSE_RDRAG_DOWN),
+    REPEAT(BUTTON_POWER|BUTTON_DOWN,   ACTION_USB_HID_MOUSE_RDRAG_DOWN_REP),
+    DOWN  (BUTTON_POWER|BUTTON_LEFT,   ACTION_USB_HID_MOUSE_RDRAG_LEFT),
+    REPEAT(BUTTON_POWER|BUTTON_LEFT,   ACTION_USB_HID_MOUSE_RDRAG_LEFT_REP),
+    DOWN  (BUTTON_POWER|BUTTON_RIGHT,  ACTION_USB_HID_MOUSE_RDRAG_RIGHT),
+    REPEAT(BUTTON_POWER|BUTTON_RIGHT,  ACTION_USB_HID_MOUSE_RDRAG_RIGHT_REP),
+    DOWN  (BUTTON_SCROLL_BACK,         ACTION_USB_HID_MOUSE_WHEEL_SCROLL_UP),
+    REPEAT(BUTTON_SCROLL_BACK,         ACTION_USB_HID_MOUSE_WHEEL_SCROLL_UP),
+    DOWN  (BUTTON_SCROLL_FWD,          ACTION_USB_HID_MOUSE_WHEEL_SCROLL_DOWN),
+    REPEAT(BUTTON_SCROLL_FWD,          ACTION_USB_HID_MOUSE_WHEEL_SCROLL_DOWN),
+
+    LAST_ITEM_IN_LIST__NEXTLIST(CONTEXT_USB_HID)
+}; /* button_context_usb_hid_mode_mouse */
+#endif
+#endif
+
+/* get_context_mapping returns a pointer to one of the above defined arrays depending on the context */
+const struct button_mapping* get_context_mapping(int context)
+{
+    switch (context)
+    {
+        case CONTEXT_STD:
+            return button_context_standard;
+            
+        case CONTEXT_WPS:
+            return button_context_wps;
+
+        case CONTEXT_LIST:
+            return button_context_list;
+        case CONTEXT_TREE:
+        case CONTEXT_MAINMENU:
+            if (global_settings.hold_lr_for_scroll_in_list)
+                return button_context_listtree_scroll_without_combo;
+            else 
+                return button_context_listtree_scroll_with_combo;
+        case CONTEXT_CUSTOM|CONTEXT_TREE:
+            return button_context_tree;
+
+        case CONTEXT_SETTINGS:
+            return button_context_settings;
+        case CONTEXT_CUSTOM|CONTEXT_SETTINGS:
+        case CONTEXT_SETTINGS_COLOURCHOOSER:
+        case CONTEXT_SETTINGS_EQ:
+        case CONTEXT_SETTINGS_RECTRIGGER:
+            return button_context_settings_right_is_inc;
+
+        case CONTEXT_SETTINGS_TIME:
+            return button_context_settings_time;
+
+        case CONTEXT_YESNOSCREEN:
+            return button_context_yesno;
+        case CONTEXT_FM:
+            return button_context_radio;
+        case CONTEXT_BOOKMARKSCREEN:
+            return button_context_bmark;
+        case CONTEXT_QUICKSCREEN:
+            return button_context_quickscreen;
+        case CONTEXT_PITCHSCREEN:
+            return button_context_pitchscreen;
+#ifdef HAVE_RECORDING
+        case CONTEXT_RECSCREEN:
+            return button_context_recscreen;
+#endif
+        case CONTEXT_KEYBOARD:
+        case CONTEXT_MORSE_INPUT:
+            return button_context_keyboard;
+#ifdef USB_ENABLE_HID
+        case CONTEXT_USB_HID:
+            return button_context_usb_hid;
+        case CONTEXT_USB_HID_MODE_MULTIMEDIA:
+            return button_context_usb_hid_mode_multimedia;
+        case CONTEXT_USB_HID_MODE_PRESENTATION:
+            return button_context_usb_hid_mode_presentation;
+        case CONTEXT_USB_HID_MODE_BROWSER:
+            return button_context_usb_hid_mode_browser;
+#ifdef HAVE_USB_HID_MOUSE
+        case CONTEXT_USB_HID_MODE_MOUSE:
+            return button_context_usb_hid_mode_mouse;
+#endif
+#endif
+        default:
+            return button_context_standard;
+    } 
+    return button_context_standard;
+}
+
+#endif /* MEYERTIME_KEYMAP */
