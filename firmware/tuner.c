@@ -36,7 +36,12 @@ const struct fm_region_data fm_region_data[TUNER_NUM_REGIONS] =
     [REGION_JAPAN]     = { 76000000,  90000000, 100000, 50 },
     [REGION_KOREA]     = { 87500000, 108000000, 200000, 50 },
     [REGION_ITALY]     = { 87500000, 108000000,  50000, 50 },
+
+#ifndef MEYERTIME_FM
     [REGION_OTHER]     = { 87500000, 108000000,  50000, 50 }
+#else
+    [REGION_OTHER]     = { 65000000,  76000000,  50000, 50 }
+#endif
 };
 
 #ifndef SIMULATOR

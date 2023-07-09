@@ -257,8 +257,14 @@ static void rda5802_set_region(int region)
 {
     const struct fm_region_data *rd = &fm_region_data[region];
 
+#ifndef MEYERTIME_FM
     int band = (rd->freq_min == 76000000) ?
                CHANNEL_BAND_760_900 : CHANNEL_BAND_870_1080;
+#else
+    int band = (rd->freq_min == 65000000) ? (CHANNEL_BAND_650_760) :
+        ((rd->freq_min == 76000000) ? CHANNEL_BAND_760_900 : CHANNEL_BAND_870_1080);
+#endif
+
     int deemphasis = (rd->deemphasis == 50) ? SYSCONFIG1_DE : 0;
     int space = (rd->freq_step == 50000) ?
                 CHANNEL_SPACE_50KHZ : CHANNEL_SPACE_100KHZ;
