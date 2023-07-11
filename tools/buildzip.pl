@@ -649,6 +649,8 @@ sub runone {
         $rbdir = substr($rbdir, 1);
     }
 
+    $rbdir =~ s/^(\/?)<microSD1>\//\1/;
+
     # build a full install .rockbox ($rbdir) directory
     buildzip($target, $fonts);
 

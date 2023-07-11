@@ -22,10 +22,10 @@ use_logf_serial="#undef LOGF_SERIAL"
 
 scriptver=`echo '$Revision$' | sed -e 's:\\$::g' -e 's/Revision: //'`
 
-rbdir="/.rockbox"
-bindir=
-libdir=
-sharedir=
+rbdir="/<microSD1>/.rockbox"
+bindir="/<microSD1>/.rockbox"
+libdir="/<microSD1>/.rockbox"
+sharedir="/<microSD1>"
 
 thread_support="ASSEMBLER_THREADS"
 app_lcd_width=

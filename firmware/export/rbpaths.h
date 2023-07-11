@@ -52,7 +52,7 @@
 /* Where to put save files like recordings, playlists, screen dumps ...*/
 #define HOME_DIR "/mnt/sdcard"
 #else
-#define HOME_DIR "/"
+#define HOME_DIR "/<microSD1>"
 #endif
 
 /* make sure both are the same for native builds */
