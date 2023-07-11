@@ -6,9 +6,11 @@ Original README: [docs/README](docs/README)
 
 This is a fork of Rockbox that implements some customizations specifically for the Sansa Fuze.  They are released as 3 variations:
 
-- `sedimentary` - [Custom keymap](#custom-keymap)
-- `igneous` - [Custom FM region](#custom-fm-region)
+- `sedimentary` - [Custom keymap](#custom-keymap) and some [other improvements](#other-improvements)
+- `igneous` - [Custom FM region](#custom-fm-region), some [additional radio refinements](#additional-radio-refinements), and some [other improvements](#other-improvements)
 - `metamorphic` - Combination of `sedimentary` and `igneous`
+
+**NOTE**: These builds are designed to be booted from the microSD card and will most likely not work when booted from internal flash memory.  See [boot from microSD card](#boot-from-microsd-card) for more information.
 
 These customizations are based on the latest stable version of Rockbox.  Releases are published here: https://github.com/meyertime/rockbox/releases
 
@@ -16,9 +18,13 @@ Currently, I am only testing for the Sansa Fuze.  If there is interest in `igneo
 
 ## Custom keymap
 
+This section applies to `sedimentary` and `metamorphic` builds.
+
 The scroll wheel on the Sansa Fuze eventually wears out and becomes hard to turn.  It's also a bit gimmicky in my opinion.  I much preferred the interface of the Clip+.  The custom keymap tries to avoid using the scroll wheel as much as is practical.  It is still used to control the volume in some cases.  Instead, the four direction buttons tend to move things in their respective directions, much like the Clip+.
 
 ## Custom FM region
+
+This section applies to `igneous` and `metamorphic` builds.
 
 I had a need to receive FM frequencies in the 72-76 MHz range.  This is an unusual band that is not in common use anywhere in the world anymore.  Of all the FM chips supported by Rockbox, only the RDA5802 supports FM frequencies below 76 MHz.  It has a 65-76 MHz band.  However, the official version of Rockbox does not make use of this band, most likely because not all FM chips support it, and it is rarely used anyway.  This customization changes the "Other" FM region to be 65-76 MHz and take advantage of the RDA5802's support for it.  However, if you attempt to use this region with other FM chips, the stated frequency will not match the actual tuning frequency, if you don't run into errors first.
 
@@ -32,6 +38,52 @@ BH0910BMWK-4GB | v2      | Si4702
 BH1002CABK-4GB | v2      | Si4702
 BH1006CBAK-4GB | v2      | RDA5802
 BH1006CBNK-4GB | v2      | RDA5802
+
+### Additional radio refinements
+
+This section applies to `igneous` and `metamorphic` builds.
+
+- FM radio no longer prompts to auto-scan when there are no presets.  Auto-scan is still available in the FM radio menu.
+- FM radio now defaults to "Scan" mode at all times.  Previously, FM radio defaulted to "Preset" mode when there are presets and the current frequency corresponds to one of the presets.
+- You will now be prompted to save presets after clearing or deleting the last preset.  Previously, there was no way to clear FM presets permanently without editing the preset file by hand.  You still cannot save a new preset file when there are no presets to save.
+
+## Other improvements
+
+This section applies to all builds.
+
+- Fixed `grep: warning: stray \ before #` warnings during build process.
+- Added meyertime to the credits.
+- Avoid using internal flash memory entirely; see the following section for details.
+
+### Boot from microSD card
+
+Rockbox has the ability to boot from firmware located on the microSD card rather than internal flash memory.  As long as you have the latest v3.15 bootloader installed on the device, it will look for a special file on the microSD card to indicate where to look for firmware.  For example, Rockbox is normally loaded from a directory called `.rockbox` in internal flash memory; however, on a Fuze v2 device, if a file called `rockbox_main.fuze2` is found on the microSD card root, and its contents are empty or `/`, it will load Rockbox firmware from `/<microSD1>/.rockbox`.  If the contents indicate some other directory, such as `/example`, it will load from `/<microSD1/example/.rockbox`.  For a Fuze v1 device, it will look for `rockbox_main.fuze`.  For a Clip+ device, it will look for `rockbox_main.clip+`.
+
+The reason for this is because all flash memory wears out as it is written to.  In other words, it has a limited number of writes that can be done before the memory can no longer be written to.  If that happens to the device's internal flash memory, then best case scenario, the device will still function, but anything written to the internal memory will not have any effect.  Worst case scenario, the internal memory is left in an invalid state, and the device will no longer function at all.  That's why it is best to avoid using the internal memory and use only a microSD card inserted into the device.  These cards are cheap and easy to replace, unlike the internal flash memory chip.
+
+However, at least with the latest stable version of Rockbox, v3.15, it still looks to the internal flash memory and saves to it for many things, including configuration, theme files, plugins, etc.  I have made changes in this fork to make it look to `/<microSD1>/.rockbox` for everything.  This is a bit of a hacky workaround, because it means you must use that exact location for your Rockbox installation.  Other directories specified by the `rockbox_main.*` file are not supported; it must be empty or `/`.  It was done this way because most directories are hard-coded using preprocessor directives at build time in the current stable version of the code, so it would require an overhaul of the code to allow these directories to change dynamically at run time.
+
+Here is basically how to perform the installation:
+
+- If Rockbox stable v3.15 or newer is not already installed on the internal flash memory, install it.
+    - With no microSD card inserted, connect the device over USB (and mount the internal storage, if using Linux).
+    - Use Rockbox Utility to install Rockbox stable v3.15 as you normally would.
+    - Safely remove USB and disconnect the device.  Turn it off and on again.
+- Insert the microSD card into the device.
+- Connect the device over USB (and mount if necessary).  It should show two drives: one for internal and one for the microSD card.
+- Copy the `.rockbox` directory from the internal storage to the microSD card.  There should be a directory called `.rockbox` in the microSD card when you are done.
+- Create an empty file called `rockbox_main.fuze`, `rockbox_main.fuze2`, or `rockbox_main.clip+` into the microSD card root directory, depending on your model of device.
+- Unzip the contents of one of these builds (`sedimentary`, `igneous`, or `metamorphic`) into the microSD card.  Have it write into any matching directories and overwrite any matching files.
+- Safely remove both USB drives and disconnect the device.  Turn it off and on again.
+- If successful, the Rockbox screen should indicate the meyertime build variant (`sedimentary`, `igneous`, or `metamorphic`) as part of the version number while booting.
+    - If you install your own build from this fork, the version will indicate the build date instead.
+
+Then, to use the device going forward:
+
+- Do not use the device without the microSD card inserted.  That microSD card is now just for that device.
+- In Rockbox, you can set Settings -> General Settings -> System -> USB Hide Internal Drive to "Yes" if desired.  Then, when connecting the device to your computer, you will only see the microSD card and avoid accidentally using the internal flash memory.
+- When you need to copy files to or from the microSD card, simply connect the device over USB to access the microSD card.
+- If the microSD card wears out (because all flash memory eventually does), you can simply repeat the installation process for a new microSD card.
 
 ## Development
 
