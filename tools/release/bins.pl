@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 $rockbox_version="3.15";
-$meyertime_version="1";
+$meyertime_version="2";
 
 require "tools/builds.pm";
 
