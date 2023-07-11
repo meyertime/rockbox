@@ -421,7 +421,12 @@ int preset_list_clear(void)
     /* The preset list will be cleared switch to Scan Mode. */
     radio_mode = RADIO_SCAN_MODE;
     curr_preset = -1;
+
+#ifndef MEYERTIME_FM
     presets_changed = false; /* Don't ask to save when clearing the list. */
+#else
+    presets_changed = true;
+#endif
 
     return true;
 }
