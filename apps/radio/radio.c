@@ -429,12 +429,17 @@ void radio_screen(void)
         radio_start();
 #endif
 
+#ifndef MEYERTIME_FM
     if(radio_preset_count() < 1 && yesno_pop(ID2P(LANG_FM_FIRST_AUTOSCAN)))
         presets_scan(NULL);
+#endif
 
     preset_set_current(preset_find(curr_freq));
+
+#ifndef MEYERTIME_FM
     if(radio_current_preset() != -1)
          radio_mode = RADIO_PRESET_MODE;
+#endif
 
     /* Load/update the skin at last, when fully initialzed, so that it can
      * display the right content from the beginning */
