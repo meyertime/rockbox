@@ -333,10 +333,14 @@ static int radio_delete_preset(void)
             --curr_preset;
     }
 
+#ifndef MEYERTIME_FM
      /* Don't ask to save when all presets are deleted. */
     presets_changed = num_presets > 0;
+#else
+    presets_changed = true;
+#endif
 
-    if (!presets_changed)
+    if (num_presets < 1)
     {
         /* The preset list will be cleared, switch to Scan Mode. */
         radio_mode = RADIO_SCAN_MODE;
