@@ -6,8 +6,25 @@
 #                     \/            \/     \/    \/            \/
 # $Id$
 #
+
+sub print_credit {
+    my ($credit)=@_;
+    $credit =~ s/\"/\\\"/g;
+    $credit =~ s/\s+$//;
+    print "\"$credit\",\n";
+}
+
 while (<STDIN>) {
-    if(($_ =~ /^([A-Z]+[\S ]+)/) && ($_ !~ /^People/)) {
-	print "\"$1\",\n";
+    last if ($_ =~ /^People/);
+}
+
+while (<STDIN>) {
+    if ($_ !~ /^\s*$/) {
+        print_credit($_);
+        last;
     }
+}
+
+while (<STDIN>) {
+    print_credit($_);
 }
