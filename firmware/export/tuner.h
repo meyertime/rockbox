@@ -84,7 +84,15 @@ enum
     REGION_JAPAN,
     REGION_KOREA,
     REGION_ITALY,
+
+#ifndef MEYERTIME_FM
     REGION_OTHER,
+#else
+    REGION_OTHER1,
+    REGION_OTHER2,
+    REGION_OTHER3,
+    REGION_OTHER4,
+#endif
 
     /* Add new regions above this line */
     TUNER_NUM_REGIONS

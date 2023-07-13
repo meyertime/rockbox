@@ -40,7 +40,10 @@ const struct fm_region_data fm_region_data[TUNER_NUM_REGIONS] =
 #ifndef MEYERTIME_FM
     [REGION_OTHER]     = { 87500000, 108000000,  50000, 50 }
 #else
-    [REGION_OTHER]     = { 65000000,  76000000,  50000, 50 }
+    [REGION_OTHER1]    = { 65000000,  76000000,  50000, 50 },
+    [REGION_OTHER2]    = { 65000000,  76000000,  50000, 75 },
+    [REGION_OTHER3]    = { 65000000,  76000000, 100000, 50 },
+    [REGION_OTHER4]    = { 65000000,  76000000, 100000, 75 }
 #endif
 };
 

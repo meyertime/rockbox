@@ -1917,11 +1917,23 @@ const struct settings_list settings[] = {
                 "rewind duration on pause", UNIT_SEC, 0, 15, 1,
                 formatter_time_unit_0_is_off, getlang_time_unit_0_is_off, NULL),
 #if CONFIG_TUNER
+#ifndef MEYERTIME_FM
     CHOICE_SETTING(0, fm_region, LANG_FM_REGION, 0,
                    "fm_region", "eu,us,jp,kr,it,wo", set_radio_region, 6,
                    ID2P(LANG_FM_EUROPE), ID2P(LANG_FM_US),
                    ID2P(LANG_FM_JAPAN), ID2P(LANG_FM_KOREA),
                    ID2P(LANG_FM_ITALY), ID2P(LANG_FM_OTHER)),
+#else
+    CHOICE_SETTING(0, fm_region, LANG_FM_REGION, 0,
+                   "fm_region", "eu,us,jp,kr,it,wo,o2,o3,o4", set_radio_region, 9,
+                   ID2P(LANG_FM_EUROPE), ID2P(LANG_FM_US),
+                   ID2P(LANG_FM_JAPAN), ID2P(LANG_FM_KOREA),
+                   ID2P(LANG_FM_ITALY),
+                   "65-76 MHz, .05 MHz step, 50 µS emphasis",
+                   "65-76 MHz, .05 MHz step, 75 µS emphasis",
+                   "65-76 MHz, .1 MHz step, 50 µS emphasis",
+                   "65-76 MHz, .1 MHz step, 75 µS emphasis"),
+#endif
 #endif
 
     OFFON_SETTING(F_BANFROMQS, audioscrobbler, LANG_AUDIOSCROBBLER, false,
