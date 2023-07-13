@@ -7,14 +7,20 @@ Original README: [docs/README](docs/README)
 This is a fork of Rockbox that implements some customizations specifically for the Sansa Fuze.  They are released as 3 variations:
 
 - `sedimentary` - [Custom keymap](#custom-keymap) and some [other improvements](#other-improvements)
-- `igneous` - [Custom FM region](#custom-fm-region), some [additional radio refinements](#additional-radio-refinements), and some [other improvements](#other-improvements)
+- `igneous` - [Custom FM regions](#custom-fm-regions), some [additional radio refinements](#additional-radio-refinements), and some [other improvements](#other-improvements)
 - `metamorphic` - Combination of `sedimentary` and `igneous`
-
-**NOTE**: These builds are designed to be booted from the microSD card and will most likely not work when booted from internal flash memory.  See [boot from microSD card](#boot-from-microsd-card) for more information.
 
 These customizations are based on the latest stable version of Rockbox.  Releases are published here: https://github.com/meyertime/rockbox/releases
 
 Currently, I am only testing for the Sansa Fuze.  If there is interest in `igneous` for the Clip+, please open an issue, and I will provide the build.
+
+## Breaking changes
+
+Please take special note of the following breaking changes when compared to the official Rockbox:
+
+- These builds are designed to be booted from the microSD card and will most likely not work when booted from internal flash memory.  See [boot from microSD card](#boot-from-microsd-card) for more information.
+- The [custom FM regions](#custom-fm-regions) will not work unless the device has the RDA5802 FM chip; therefore, do not install `igneous` or `metamorphic` builds on devices that do not have this FM chip.
+- The [custom FM region](#custom-fm-regions) names are hard-coded rather than having translations depending on the configured language.  These may or may not make sense in languages other than English.
 
 ## Custom keymap
 
@@ -22,11 +28,13 @@ This section applies to `sedimentary` and `metamorphic` builds.
 
 The scroll wheel on the Sansa Fuze eventually wears out and becomes hard to turn.  It's also a bit gimmicky in my opinion.  I much preferred the interface of the Clip+.  The custom keymap tries to avoid using the scroll wheel as much as is practical.  It is still used to control the volume in some cases.  Instead, the four direction buttons tend to move things in their respective directions, much like the Clip+.
 
-## Custom FM region
+## Custom FM regions
 
 This section applies to `igneous` and `metamorphic` builds.
 
-I had a need to receive FM frequencies in the 72-76 MHz range.  This is an unusual band that is not in common use anywhere in the world anymore.  Of all the FM chips supported by Rockbox, only the RDA5802 supports FM frequencies below 76 MHz.  It has a 65-76 MHz band.  However, the official version of Rockbox does not make use of this band, most likely because not all FM chips support it, and it is rarely used anyway.  This customization changes the "Other" FM region to be 65-76 MHz and take advantage of the RDA5802's support for it.  However, if you attempt to use this region with other FM chips, the stated frequency will not match the actual tuning frequency, if you don't run into errors first.
+This customization changes the "Other" FM region to be 65-76 MHz and take advantage of the RDA5802's support for it.  It also adds 3 more regions in order to make available every combination of step (.05 or .1 MHz) and emphasis (50 or 75 μS) supported by this chip for this band.  However, if you attempt to use any of these regions with other FM chips, the stated frequency will not match the actual tuning frequency, if you don't run into errors first.
+
+I had a need to receive FM frequencies in the 72-76 MHz range.  This is an unusual band that is not in common use anywhere in the world anymore.  Of all the FM chips supported by Rockbox, only the RDA5802 supports FM frequencies below 76 MHz.  It has a 65-76 MHz band.  However, the official version of Rockbox does not make use of this band, most likely because not all FM chips support it, and it is rarely used anyway.
 
 If you've made it this far, then you might be wondering which devices have the RDA5802 chip.  It appears that only _some_ Sansa Fuze v2 units and _some_ Sansa Clip+ units have this chip.  I have only gotten my hands on Sansa Fuze v2 units with this chip.  You can check which FM chip it has in Rockbox's menu: System -> Debug (Keep Out!) -> FM Radio.
 
